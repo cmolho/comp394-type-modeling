@@ -68,13 +68,22 @@ public class PythonObject {
      * @throws PythonAttributeException When there is no attribute on this object with that name.
      */
     public final PythonObject get(String attrName) throws PythonAttributeException {
-        if (attrs.containsKey(attrName)) {
-            return attrs.get(attrName);
-        } else if (getMRO().size() >= 2) {
-            return getMRO().get(1).get(attrName);
-        } else {
-            throw new PythonAttributeException(this, attrName);
+
+//        for(Utensil utensil : getKitchenUtensils()) {
+//        }
+//
+//        if (attrs.containsKey(attrName)) {
+//            return attrs.get(attrName);
+//        } else if (getMRO().size() >= 2) {
+//            return getMRO().get(1).get(attrName);
+//        }
+
+        for (PythonObject pythonObject : getMRO()) {
+            if (pythonObject.attrs.containsKey(attrName)) {
+                return pythonObject.attrs.get(attrName);
+            }
         }
+        throw new PythonAttributeException(this, attrName);
     }
 
     /**
