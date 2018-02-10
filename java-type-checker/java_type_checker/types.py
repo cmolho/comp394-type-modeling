@@ -84,6 +84,9 @@ class NullType(Type):
     def is_subtype_of(self, other):
         return True
 
+    def method_named(self, name):
+        raise NoSuchMethod("Cannot invoke method {0}() on null".format(name))
+
 
 class NoSuchMethod(Exception):
     pass

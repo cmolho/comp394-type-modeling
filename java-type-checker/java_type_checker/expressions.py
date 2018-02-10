@@ -119,20 +119,22 @@ class ConstructorCall(Expression):
             error = "Type {0} is not instantiable".format(
                 self.instantiated_type.name)
             raise JavaTypeError(error)
-        expected_types = self.instantiated_type.constructor.argument_types
-        if len(self.args) != len(expected_types):
-            error = "Wrong number of arguments for {0} constructor: expected {1}, got {2}".format(
-                    self.instantiated_type.name,
-                    len(expected_types),
-                    len(self.args))
-            raise JavaTypeError(error)
-        for i in range(len(self.args)):
-            if not self.args[i].static_type().is_subtype_of(expected_types[i]):
-                error = "{0} constructor expects arguments of type {1}, but got {2}".format(
+        try:
+            expected_types = self.instantiated_type.constructor.argument_types
+            if len(self.args) != len(expected_types):
+                raise JavaTypeError("Wrong number of arguments for {0} constructor: expected {1}, got {2}".format(
                         self.instantiated_type.name,
-                        names(expected_types),
-                        names([a.static_type() for a in self.args]))
-                raise JavaTypeError(error)
+                        len(expected_types),
+                        len(self.args)))
+            for i in range(len(self.args)):
+                if not self.args[i].static_type().is_subtype_of(expected_types[i]):
+                    raise JavaTypeError("{0} constructor expects arguments of type {1}, but got {2}".format(
+                            self.instantiated_type.name,
+                            names(expected_types),
+                            names([a.static_type() for a in self.args])))
+        except AttributeError:
+            raise JavaTypeError("Type {0} is not instantiable".format(
+                self.instantiated_type.name))
 
 class JavaTypeError(Exception):
     """ Indicates a compile-time type error in an expression.
